@@ -187,11 +187,11 @@ const phases = [
   {
     label:"Fase 0 — Persiapan Awal (Sebelum Memulai)", color:"#888780",
     steps:[
-      { num:"0.1", label:"Import Data Std Registration & Free Elective Registration Report", type:"bgr",
-        pic:PIC_NAMES, picType:"program",
+      { num:"0.1", label:"Import Submber Data yang dibutuhkan", type:"bgr",
+        pic:"Contributor", picType:"-",
         source:"Spreadsheet Hasil Peminatan (Pusat)", sourceLink:HASIL_LINK,
         desc:"Langkah paling awal sebelum apapun dimulai. Import dua file data ke Spreadsheet Hasil Peminatan:\n• Std Registration Report\n• Free Elective Registration Report\n\nHasil import ini menjadi data sumber utama untuk seluruh analisa peminatan semua PIC Program.",
-        action:"1. Buka Spreadsheet Hasil Peminatan (link sumber di atas)\n2. Import file Std Registration Report\n3. Import file Free Elective Registration Report\n4. Pastikan data ter-load dengan benar di Sheet Regist Masing-Masing PIC",
+        action:"1. Buka Spreadsheet Hasil Peminatan (link sumber di atas)\n2. Import file Std Registration Report\n3. Import file Free Elective Registration Report\n4. Import file Tarikan N_CRSE_PER_PERIOD dari BCS\n5. Import File Tarikan N_CRSE_DESCR dari BCS\n6. Buat Sheet Baru untuk menampilkan Data Duplikat dari Term Active yang di IMPORTRANGE dari Spreadsheet Tarikan Term Active\n *Masing-masing File yang diimport dibuatkan SHeet yang berbeda",
         output:"Sheet Regist Masing-Masing PIC terbentuk → menjadi data sumber untuk analisa peminatan tiap PIC" },
       { num:"0.2", label:"Pendataan SKS Streaming / Minor / EC / FE per Program", type:"bgr",
         pic:PIC_NAMES, picType:"program",
