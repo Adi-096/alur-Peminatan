@@ -189,7 +189,7 @@ const phases = [
     label:"Fase 0 — Persiapan Awal (Sebelum Memulai)", color:"#888780",
     steps:[
       { num:"0.1", label:"Import Submber Data yang dibutuhkan", type:"bgr",
-        pic:["Contributor"], picType:"custom",
+        pic:["Contributor"], picType:"custom",picLabel:"Contributor Spreadsheet",
         source:"Spreadsheet Olahan Peminatan", sourceLink:OLAH_LINK,
         desc:"Langkah paling awal sebelum apapun dimulai. Import SEMUA Sumber Data yang dibuthkan untuk selanjutnya menjadi DATA ACUAN untuk seluruh rangkaian proses analisa peminatan semua PIC Program.",
         action:"1. Buka Spreadsheet Hasil Peminatan (link sumber di atas)\n2. Import file Std Registration Report\n3. Import file Free Elective Registration Report\n4. Import file Tarikan N_CRSE_PER_PERIOD dari BCS\n5. Import File Tarikan N_CRSE_DESCR dari BCS\n6. Buat Sheet Baru untuk menampilkan Data Duplikat dari Term Active yang di IMPORTRANGE dari Spreadsheet Tarikan Term Active\n *Masing-masing File yang diimport dibuatkan SHeet yang berbeda",
@@ -380,7 +380,7 @@ phases.forEach((phase, pi) => {
       <div class="card-num">Step ${s.num}</div>
       <div class="card-title">${s.label}</div>
       <div class="card-badge"><span class="badge ${s.type}" style="font-size:10px">
-        ${s.picType==='auto'?'Otomatis':s.picType==='dept'?'PIC Dept':'PIC Program'}
+        ${s.picLabel ? s.picLabel : (s.picType==='auto'?'Otomatis':s.picType==='dept'?'PIC Dept':'PIC Program')}
       </span></div>
       <span class="card-arrow-ind">▾</span>`;
 
