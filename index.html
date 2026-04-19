@@ -353,7 +353,7 @@ function buildPicHtml(s) {
 
   // default (program) → pakai link
   const links = s.pic.map(n => `<a class="pic-link" href="${PIC_LINKS[n]}" target="_blank">${n} ↗</a>`).join('');
-  return `<div style="font-size:11px;color:#6b6a63;margin-bottom:3px">Klik nama untuk buka spreadsheet:</div>
+  return `<div style="font-size:11px;color:#6b6a63;margin-bottom:0px">Klik nama untuk buka spreadsheet:</div>
           <div class="pic-links">${links}</div>`;
 }
   
