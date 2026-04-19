@@ -337,11 +337,26 @@ const phases = [
 ];
 
 function buildPicHtml(s) {
-  if (s.picType === "auto") return `<span class="badge bc" style="font-size:11px">Otomatis oleh Sistem</span>`;
-  if (s.picType === "dept") return `<span class="badge bc" style="font-size:11px">PIC Department (masing-masing)</span>`;
+  if (s.picType === "auto") {
+    return `<span class="badge bc" style="font-size:11px">Otomatis oleh Sistem</span>`;
+  }
+
+  if (s.picType === "dept") {
+    return `<span class="badge bc" style="font-size:11px">PIC Department (masing-masing)</span>`;
+  }
+
+  // ✅ TAMBAHAN: kalau custom → tampilkan teks saja (tanpa link)
+  if (s.picType === "custom") {
+    const names = s.pic.map(n => `<span class="src-tag">${n}</span>`).join(' ');
+    return `<div class="pic-links">${names}</div>`;
+  }
+
+  // default (program) → pakai link
   const links = s.pic.map(n => `<a class="pic-link" href="${PIC_LINKS[n]}" target="_blank">${n} ↗</a>`).join('');
-  return `<div style="font-size:11px;color:#6b6a63;margin-bottom:5px">Klik nama untuk buka spreadsheet:</div><div class="pic-links">${links}</div>`;
+  return `<div style="font-size:11px;color:#6b6a63;margin-bottom:5px">Klik nama untuk buka spreadsheet:</div>
+          <div class="pic-links">${links}</div>`;
 }
+  
 function buildSrcHtml(s) {
   if (s.sourceLink) return `<a class="src-link" href="${s.sourceLink}" target="_blank">${s.source} ↗</a>`;
   return `<span class="src-tag">${s.source}</span>`;
