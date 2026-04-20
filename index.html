@@ -115,12 +115,12 @@ footer{margin-top:40px;text-align:center;font-size:11px;color:#b4b2a9}
   <div class="brief-grid">
     <div class="brief-card">
       <div class="brief-card-title">Apa tujuan alur ini?</div>
-      <div class="brief-card-body">Memastikan setiap mahasiswa mendapatkan MK EC/FE yang sesuai pilihan, sudah dikonfirmasi status pembukaannya oleh Department, dan tercatat resmi di sistem.</div>
+      <div class="brief-card-body">Memastikan setiap mahasiswa mendapatkan:\n- Peminatan serta MK EC/FE yang sesuai pilihan,\n-Tervalidsi SKS dan Distribusi mata kuliah pada programnya,\n- Sudah dikonfirmasi status pembukaannya oleh Department, dan tercatat resmi di sistem.</div>
     </div>
     <div class="brief-card">
       <div class="brief-card-title">Siapa yang terlibat?</div>
       <div class="brief-card-body">
-        <span class="brief-badge bp">PIC Program</span> input & finalisasi pilihan MK mahasiswa<br>
+        <span class="brief-badge bp">PIC Program</span> input, validasi dan finalisasi pilihan MK mahasiswa<br>
         <span class="brief-badge bc">PIC Department</span> konfirmasi status keterbukaan MK
       </div>
     </div>
@@ -191,7 +191,7 @@ const phases = [
         pic:["Contributor"], picType:"custom",picLabel:"Contributor Spreadsheet",
         source:"Spreadsheet Olahan Peminatan", sourceLink:OLAH_LINK,
         desc:"Langkah paling awal sebelum apapun dimulai. Import SEMUA Sumber Data yang dibutuhkan untuk selanjutnya menjadi DATA ACUAN untuk seluruh rangkaian proses analisa peminatan semua PIC Program.",
-        action:"1. Buka link Spreadsheet pada bagian source\n2. Import file Std Registration Report Genap dan Ganjil\n3. Import file Free Elective Registration ReportGenap dan Ganjil\n4. Import file Olah Minor Ganjil\n5. Import file Tarikan N_CRSE_PER_PERIOD dari BCS\n6. Import file Tarikan N_CRSE_DESCR dari BCS\n7. Buat Sheet Baru untuk menampilkan Data Duplikat dari Term Active yang di IMPORTRANGE dari Spreadsheet Tarikan Term Active\n\n*Masing-masing File yang diimport dibuatkan Sheet yang berbeda",
+        action:"1. Buka link Spreadsheet pada bagian Sumber Data\n2. Import file Std Registration Report Genap dan Ganjil\n3. Import file Free Elective Registration Report Genap dan Ganjil -> untuk menampilkan data mahasiswa yang memilih MK EC/FE\n4. Import file Olah Minor Ganjil -> untuk mengambil data hasil pilihan minor mahasiswa\n5. Import file Tarikan N_CRSE_PER_PERIOD dari BCS - > ini PENTING dikarenakan untuk ACUAN validasi kesesuaian Distribusi MK pada programnya\n6. Import file Tarikan N_CRSE_DESCR dari BCS -> untuk mengambil data Nama Bahasa Indonesia pada tiap MK\n7. Buat Sheet Baru untuk menampilkan Data Duplikat dari Term Active yang di IMPORTRANGE dari Spreadsheet Tarikan Term Active\n\n*Masing-masing File yang diimport dibuatkan Sheet yang berbeda",
         output:"SUMBER DATA ACUAN untuk analisa peminatan tiap PIC" },
       { num:"0.2", label:"Pendataan SKS Streaming / Minor / EC / FE per Program", type:"bgr",
         pic:PIC_NAMES, picType:"custom",
@@ -200,10 +200,10 @@ const phases = [
         action:"1. Buka link Spreadsheet pada bagian source\n2. beralih ke Sheet yang bernama Legend, kemudian Isi Kolom D dengan SKS Streaming\n3. Isi Kolom E dengan SKS Free Electives\n4. Isi Kolom F dengan SKS Elective Courses\n   → Jika ada MK EC dalam Streaming, tetap input SKS-nya di Kolom F",
         output:"Data SKS terpantau → menjaga kesesuaian jumlah SKS MK yang diinput saat analisa" },
       { num:"0.3", label:"Create Sheet Regist & Copy Formula Masing-Masing PIC", type:"bgr",
-        pic:PIC_NAMES, picType:"program",
-        source:"Spreadsheet Peminatan Masing-Masing PIC",
-        desc:"Create atau Setup awal spreadsheet PIC agar semua formula dan kondisi berjalan dengan benar. Dilakukan sekali setiap periode analisa baru.",
-        action:"SETUP SHEET REGIST:\n1. Copy-Paste Baris 1 s/d 3 dari Sheet Regist PIC periode sebelumnya\n2. Ganti Nama PIC di Kolom A Baris Kedua\n3. Copy kembali 2 Baris Pertama → Paste di Baris ke-4\n\nCOPY FORMULA:\n4. Copy formula pada cell kosong (atau cell abu gelap di atasnya)\n5. Paste sampai baris seterusnya\n\nGANTI NAMA PIC DI SEMUA SHEET:\n6. Tekan CTRL+H\n7. Isi nama PIC sebelumnya → Replace dengan nama PIC seharusnya\n8. Pilih Semua Sheet → centang 'Telusuri juga dalam formula'\n9. Klik 'Ganti Semua / Replace ALL'",
+        pic:PIC_NAMES, picType:"custom",
+        source:"Spreadsheet Olahan Peminatan", sourceLink:OLAH_LINK,
+        desc:"Create sheets dan spreadsheet PIC agar semua formula dan kondisi berjalan dengan benar. Dilakukan sekali setiap periode analisa baru.",
+        action:"Create Sheets PIC:\n1. Copy-Paste Baris 1 s/d 3 dari Sheet Regist PIC periode sebelumnya\n2. Ganti Nama PIC di Kolom A Baris Kedua\n3. Copy kembali 2 Baris Pertama → Paste di Baris ke-4\n\nCOPY FORMULA:\n4. Copy formula pada cell kosong (atau cell abu gelap di atasnya)\n5. Paste sampai baris seterusnya\n\nCreate Spradsheet PIC atau Buat salinan dari spreadsheet yang sudah ada sebelumnya\n- GANTI NAMA PIC DI SEMUA SHEET:\n- Tekan CTRL+H\n- Isi nama PIC sebelumnya → Replace dengan nama PIC seharusnya\n- Pilih Semua Sheet → centang 'Telusuri juga dalam formula'\n- Klik 'Ganti Semua / Replace ALL'",
         output:"Formula berjalan: monitoring pilihan Minor & Status Registrasi, pengambilan Nama MK dari kode, Type & Kategori MK" }
     ]
   },
