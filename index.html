@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alur Analisa EC/FE — Diagram Interaktif</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f4ef;color:#1a1a18;min-height:100vh;padding:28px 20px 60px}
+.container{max-width:1100px;margin:0 auto}
+
+/* HEADER */
+header{margin-bottom:22px}
+header h1{font-size:20px;font-weight:700;margin-bottom:4px}
+header p{font-size:13px;color:#6b6a63;line-height:1.5}
+
+/* BRIEF */
+.brief{background:#fff;border:0.5px solid #d3d1c7;border-radius:12px;padding:20px 22px;margin-bottom:22px}
+.brief-label{font-size:10px;font-weight:700;color:#888780;text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px}
+.brief-lead{font-size:13px;color:#1a1a18;line-height:1.65;margin-bottom:16px}
+.brief-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.brief-card{background:#f9f8f4;border:0.5px solid #d3d1c7;border-radius:8px;padding:10px 13px}
+.brief-card-title{font-size:10px;font-weight:700;color:#444441;margin-bottom:4px;text-transform:uppercase;letter-spacing:.03em}
+.brief-card-body{font-size:12px;color:#6b6a63;line-height:1.6}
+.brief-badge{display:inline-flex;font-size:10px;font-weight:600;padding:1px 7px;border-radius:20px;border:0.5px solid;margin-right:4px;margin-bottom:2px}
+.brief-badge.bp{background:#EEEDFE;color:#3C3489;border-color:#7F77DD}
+.brief-badge.bc{background:#FAECE7;color:#712B13;border-color:#D85A30}
+.brief-phases{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin-bottom:14px}
+.bph{font-size:10px;font-weight:600;text-align:center;padding:5px 10px;border-radius:8px;border:0.5px solid;line-height:1.4}
+.bph span{font-weight:400;display:block}
+.barr{font-size:11px;color:#b4b2a9}
+.brief-note{font-size:11px;color:#854F0B;background:#FAEEDA;border:0.5px solid #EF9F27;border-radius:7px;padding:7px 11px;line-height:1.5}
+
+/* LEGEND */
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
+.badge{display:inline-flex;align-items:center;font-size:11px;font-weight:500;padding:2px 9px;border-radius:20px;white-space:nowrap;border:0.5px solid}
+.bp{background:#EEEDFE;color:#3C3489;border-color:#7F77DD}
+.bt{background:#E1F5EE;color:#085041;border-color:#1D9E75}
+.ba{background:#FAEEDA;color:#633806;border-color:#BA7517}
+.bc{background:#FAECE7;color:#712B13;border-color:#D85A30}
+.bb{background:#E6F1FB;color:#0C447C;border-color:#378ADD}
+.bg{background:#EAF3DE;color:#27500A;border-color:#639922}
+.bgr{background:#F1EFE8;color:#444441;border-color:#888780}
+
+/* PHASE ROW */
+.phase-block{margin-bottom:10px}
+.phase-label{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.phase-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.phase-title{font-size:10px;font-weight:700;color:#6b6a63;text-transform:uppercase;letter-spacing:.06em}
+
+/* CARDS ROW */
+.cards-row{display:flex;align-items:stretch;gap:0;overflow-x:auto;padding-bottom:4px}
+.card-wrap{display:flex;align-items:center;flex-shrink:0}
+.step-card{
+  background:#fff;border:0.5px solid #d3d1c7;border-radius:10px;
+  padding:11px 13px;cursor:pointer;
+  transition:border-color .15s,box-shadow .15s;
+  width:190px;
+  display:flex;flex-direction:column;justify-content:space-between;
+  position:relative;flex-shrink:0
+  align-self: stretch;
+}
+.step-card:hover{border-color:#888780;box-shadow:0 1px 5px rgba(0,0,0,.08)}
+.step-card.active{border-color:#1a1a18;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.card-num{font-size:9px;font-weight:700;color:#888780;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
+.card-title{font-size:11px;font-weight:600;color:#1a1a18;line-height:1.4;flex:1}
+.card-badge{margin-top:7px}
+.card-arrow-ind{position:absolute;bottom:8px;right:10px;font-size:10px;color:#b4b2a9;transition:transform .2s}
+.step-card.active .card-arrow-ind{transform:rotate(180deg)}
+
+/* CONNECTOR ARROW */
+.conn{display:flex;align-items:center;padding:0 4px;color:#b4b2a9;font-size:14px;flex-shrink:0}
+.conn-down{display:flex;justify-content:flex-end;padding-right:95px;color:#b4b2a9;font-size:14px;margin:4px 0;line-height:1}
+
+/* DETAIL PANEL */
+.detail-panel{
+  display:none;background:#fff;border:0.5px solid #d3d1c7;
+  border-radius:10px;padding:16px 18px;margin-top:6px;
+  animation:fadeIn .15s ease
+}
+.detail-panel.open{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.dp-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;gap:12px}
+.dp-title{font-size:14px;font-weight:700;color:#1a1a18;line-height:1.4}
+.dp-close{background:none;border:0.5px solid #d3d1c7;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:11px;color:#888780;flex-shrink:0}
+.dp-close:hover{background:#f1efe8}
+.dp-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.dp-section{background:#f9f8f4;border:0.5px solid #d3d1c7;border-radius:8px;padding:11px 13px}
+.dp-section.full{grid-column:1/-1}
+.dp-section-title{font-size:9px;font-weight:700;color:#888780;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.dp-section-body{font-size:12px;color:#1a1a18;line-height:1.65;white-space:pre-line}
+.action-box{background:#fff;border:0.5px solid #d3d1c7;border-radius:7px;padding:9px 12px;font-size:12px;color:#1a1a18;line-height:1.75;white-space:pre-line}
+.output-val{font-size:12px;color:#27500A;font-weight:600;line-height:1.5}
+.pic-links{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
+.pic-link{font-size:11px;color:#185FA5;text-decoration:none;padding:2px 8px;border-radius:6px;background:#E6F1FB;border:0.5px solid #85B7EB}
+.pic-link:hover{background:#B5D4F4}
+.src-link{font-size:11px;color:#185FA5;text-decoration:none;padding:2px 8px;border-radius:6px;background:#E6F1FB;border:0.5px solid #85B7EB;display:inline-block}
+.src-link:hover{background:#B5D4F4}
+.src-tag{font-size:11px;color:#6b6a63;padding:2px 8px;border-radius:6px;background:#f1efe8;border:0.5px solid #d3d1c7;display:inline-block}
+
+footer{margin-top:40px;text-align:center;font-size:11px;color:#b4b2a9}
+
+/* FEEDBACK BUTTON */
+.feedback-wrap{margin-top:32px;text-align:center}
+.btn-feedback{display:inline-flex;align-items:center;gap:7px;background:#1a1a18;color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s}
+.btn-feedback:hover{background:#333330}
+/* FEEDBACK MODAL */
+.fb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:999;align-items:center;justify-content:center;padding:20px}
+.fb-overlay.open{display:flex}
+.fb-modal{background:#fff;border:0.5px solid #d3d1c7;border-radius:12px;width:100%;max-width:480px;box-shadow:0 8px 32px rgba(0,0,0,.14);animation:fadeIn .15s ease;overflow:hidden}
+.fb-head{padding:16px 18px 12px;border-bottom:0.5px solid #d3d1c7;display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.fb-head h3{font-size:13px;font-weight:700;margin-bottom:2px}
+.fb-head p{font-size:11px;color:#6b6a63;margin-top:2px}
+.fb-btn-x{background:none;border:0.5px solid #d3d1c7;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:11px;color:#888780}
+.fb-btn-x:hover{background:#f1efe8}
+.fb-body{padding:16px 18px;display:flex;flex-direction:column;gap:12px}
+.fb-field label{display:block;font-size:9px;font-weight:700;color:#888780;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
+.fb-field select,.fb-field textarea{width:100%;border:0.5px solid #d3d1c7;border-radius:7px;padding:8px 10px;font-size:12px;font-family:inherit;color:#1a1a18;background:#f9f8f4;outline:none;transition:border-color .15s;resize:none}
+.fb-field select:focus,.fb-field textarea:focus{border-color:#888780;background:#fff}
+.fb-field textarea{min-height:100px}
+.fb-foot{padding:11px 18px;border-top:0.5px solid #d3d1c7;display:flex;justify-content:flex-end;gap:8px}
+.fb-cancel{padding:6px 14px;border-radius:7px;border:0.5px solid #d3d1c7;background:none;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;color:#888780}
+.fb-cancel:hover{background:#f1efe8}
+.fb-send{padding:6px 16px;border-radius:7px;border:none;background:#1a1a18;color:#fff;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s}
+.fb-send:hover{background:#333330}
+.fb-send:disabled{background:#b4b2a9;cursor:not-allowed}
+.fb-success{padding:28px 18px;text-align:center;display:none}
+.fb-success.show{display:block}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <h1>Alur Analisa Elective Courses / Free Electives (+ Streaming)</h1>
+</header>
+
+<!-- BRIEF -->
+<div class="brief">
+  <div class="brief-label">Sebelum Mulai — Baca Ini Dulu</div>
+  <p class="brief-lead">Dokumen ini adalah panduan kerja analisa peminatan <strong>Elective Courses (EC) dan Free Electives (FE) (dan STREAMING)</strong> — mulai dari input data awal sampai pengumuman hasil ke mahasiswa dan upload ke BCS.</p>
+  <div class="brief-grid">
+    <div class="brief-card">
+      <div class="brief-card-title">Apa tujuan alur ini?</div>
+      <div class="brief-card-body">Memastikan setiap mahasiswa mendapatkan:\n- Peminatan serta MK EC/FE yang sesuai pilihan,\n-Tervalidsi SKS dan Distribusi mata kuliah pada programnya,\n- Sudah dikonfirmasi status pembukaannya oleh Department, dan tercatat resmi di sistem.</div>
+    </div>
+    <div class="brief-card">
+      <div class="brief-card-title">Siapa yang terlibat?</div>
+      <div class="brief-card-body">
+        <span class="brief-badge bp">PIC Program</span> input, validasi dan finalisasi pilihan MK mahasiswa<br>
+        <span class="brief-badge bc">PIC Department</span> konfirmasi status keterbukaan MK
+      </div>
+    </div>
+    <div class="brief-card">
+      <div class="brief-card-title">Ada berapa tahap?</div>
+      <div class="brief-card-body">6 fase, dari persiapan awal hingga output akhir. Klik setiap kartu untuk melihat langkah detail dan aksi yang harus dilakukan.</div>
+    </div>
+    <div class="brief-card">
+      <div class="brief-card-title">Tools yang dipakai?</div>
+      <div class="brief-card-body">Semua di <strong>Google Spreadsheet</strong> — spreadsheet per PIC Program + satu spreadsheet pusat (Hasil Peminatan) yang mengumpulkan semua data.</div>
+    </div>
+  </div>
+  <div class="brief-phases">
+    <div class="bph" style="background:#F1EFE8;color:#444441;border-color:#888780">Fase 0<span>Persiapan</span></div>
+    <div class="barr">→</div>
+    <div class="bph" style="background:#EEEDFE;color:#3C3489;border-color:#7F77DD">Fase 1<span>Input Program</span></div>
+    <div class="barr">→</div>
+    <div class="bph" style="background:#E1F5EE;color:#085041;border-color:#1D9E75">Fase 2<span>Review & Rekap</span></div>
+    <div class="barr">→</div>
+    <div class="bph" style="background:#FAECE7;color:#712B13;border-color:#D85A30">Fase 3<span>Analisa Dept</span></div>
+    <div class="barr">→</div>
+    <div class="bph" style="background:#EEEDFE;color:#3C3489;border-color:#7F77DD">Fase 4<span>Perubahan MK</span></div>
+    <div class="barr">→</div>
+    <div class="bph" style="background:#E6F1FB;color:#0C447C;border-color:#378ADD">Fase 5<span>Upload & Umumkan</span></div>
+    <div class="barr">→</div>
+    <div class="bph" style="background:#EAF3DE;color:#27500A;border-color:#639922">Fase 6<span>Selesai</span></div>
+  </div>
+  <div class="brief-note">Catatan: Spreadsheet yang digunakan memerlukan akun Google dan akses yang sudah diberikan. Jika belum punya akses, hubungi koordinator sebelum memulai.</div>
+</div>
+
+<!-- LEGEND -->
+<div class="legend">
+  <span class="badge bp">Aksi manual PIC</span>
+  <span class="badge bt">View / review</span>
+  <span class="badge ba">Rekap / monitoring</span>
+  <span class="badge bc">Output otomatis sistem</span>
+  <span class="badge bb">Upload dokumen</span>
+  <span class="badge bg">Output akhir</span>
+  <span class="badge bgr">Persiapan awal</span>
+</div>
+
+<div id="flow"></div>
+
+<div class="feedback-wrap">
+  <button class="btn-feedback" onclick="document.getElementById('fbOverlay').classList.add('open')">
+    💬 Kirim Saran / Perbaikan
+  </button>
+</div>
+
+<footer>Alur Analisa Peminatan EC/FE &mdash; versi 4</footer>
+</div>
+
+<!-- FEEDBACK MODAL -->
+<div class="fb-overlay" id="fbOverlay" onclick="if(event.target===this)closeFb()">
+  <div class="fb-modal">
+    <div class="fb-head">
+      <div>
+        <h3>💬 Kirim Saran / Perbaikan</h3>
+        <p>Pilih bagian yang perlu direvisi lalu tuliskan masukan Anda</p>
+      </div>
+      <button class="fb-btn-x" onclick="closeFb()">Tutup ✕</button>
+    </div>
+    <div class="fb-body" id="fbBody">
+      <div class="fb-field">
+        <label>Bagian / Step yang Perlu Direvisi</label>
+        <select id="fbStep">
+          <option value="">-- Pilih Step --</option>
+          <option>Step 0.1 — Import Sumber Data</option>
+          <option>Step 0.2 — Pendataan SKS Streaming / Minor / EC / FE per Program</option>
+          <option>Step 0.3 — Create Sheet Regist & Copy Formula</option>
+          <option>Step 1 — Analisa Std Registration</option>
+          <option>Step 2 — Analisa Pilihan EC/FE @Program</option>
+          <option>Step ± — Tambahan Registrasi</option>
+          <option>Step 3 — [View] Draft Analisa EC/FE</option>
+          <option>Step 4/9/13 — Rekap Draft/Hasil Analisa EC/FE</option>
+          <option>Step 5/7 — [View] EC/FE @Department</option>
+          <option>Step 6 — Analisa EC/FE @Department</option>
+          <option>Step 8 — Hasil Analisa EC/FE PIC @Department</option>
+          <option>Step 10/11 — [View] Hasil/Perubahan EC/FE @Program</option>
+          <option>Step 10.1 — Analisa Hasil/Perubahan EC/FE @Program</option>
+          <option>Step 12 — Hasil Analisa Perubahan EC/FE @PIC Program</option>
+          <option>Step 14 — Rekap Hasil/Perubahan Peminatan @Program</option>
+          <option>Step ↑ — [Upload] Std Announcement</option>
+          <option>Step ↑ — [Upload] EC/FE Announcement</option>
+          <option>Step ↑ — [Upload] Template Upload EC/FE ke BCS</option>
+          <option>Step 15 — Pengajuan Perubahan Peminatan @Program</option>
+          <option>Umum / Keseluruhan Alur</option>
+        </select>
+      </div>
+      <div class="fb-field">
+        <label>Saran / Perbaikan yang Dimaksud</label>
+        <textarea id="fbMsg" placeholder="Tuliskan secara detail perbaikan atau saran yang ingin Anda sampaikan..."></textarea>
+      </div>
+      <div id="fbErr" style="font-size:11px;color:#c0392b;display:none"></div>
+    </div>
+    <div class="fb-success" id="fbSuccess">
+      <div style="font-size:2rem;margin-bottom:8px">✅</div>
+      <h3 style="font-size:13px;font-weight:700;margin-bottom:4px">Saran Berhasil Dikirim!</h3>
+      <p style="font-size:11px;color:#6b6a63">Terima kasih atas masukan Anda.</p>
+    </div>
+    <div class="fb-foot" id="fbFoot">
+      <button class="fb-cancel" onclick="closeFb()">Batal</button>
+      <button class="fb-send" id="fbSendBtn" onclick="sendFb()">Kirim →</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+(function(){emailjs.init({publicKey:"user_placeholder"})})();
+function closeFb(){
+  document.getElementById('fbOverlay').classList.remove('open');
+  setTimeout(()=>{
+    document.getElementById('fbBody').style.display='';
+    document.getElementById('fbFoot').style.display='';
+    document.getElementById('fbSuccess').classList.remove('show');
+    document.getElementById('fbSuccess').style.display='none';
+    document.getElementById('fbStep').value='';
+    document.getElementById('fbMsg').value='';
+    document.getElementById('fbErr').style.display='none';
+  },300);
+}
+function sendFb(){
+  const step = document.getElementById('fbStep').value;
+  const msg  = document.getElementById('fbMsg').value.trim();
+  const errEl = document.getElementById('fbErr');
+  errEl.style.display='none';
+  if(!step){errEl.textContent='Silakan pilih step yang ingin direvisi.';errEl.style.display='block';return;}
+  if(!msg) {errEl.textContent='Silakan tuliskan saran / perbaikan Anda.';errEl.style.display='block';return;}
+
+  const btn = document.getElementById('fbSendBtn');
+  btn.disabled=true; btn.textContent='Mengirim...';
+
+  const subject = '[SARAN & PERBAIKAN] - Analisa Peminatan';
+  const body    = 'Bagian / Step: ' + step + '\n\nSaran / Perbaikan:\n' + msg;
+
+  // Kirim via EmailJS
+  emailjs.send('service_alurpeminatan','template_alurpeminatan',{
+    to_email:'triputramulyadi.ubn@gmail.com',
+    subject: subject,
+    step:    step,
+    message: msg
+  }).then(function(){
+    document.getElementById('fbBody').style.display='none';
+    document.getElementById('fbFoot').style.display='none';
+    const suc = document.getElementById('fbSuccess');
+    suc.style.display='block'; suc.classList.add('show');
+    btn.disabled=false; btn.textContent='Kirim →';
+  }, function(err){
+    // Fallback: buka mailto jika EmailJS gagal
+    const s = encodeURIComponent(subject);
+    const b = encodeURIComponent(body);
+    window.open('mailto:triputramulyadi.ubn@gmail.com?subject='+s+'&body='+b,'_blank');
+    document.getElementById('fbBody').style.display='none';
+    document.getElementById('fbFoot').style.display='none';
+    const suc = document.getElementById('fbSuccess');
+    suc.style.display='block'; suc.classList.add('show');
+    btn.disabled=false; btn.textContent='Kirim →';
+  });
+}
+</script>
+
+<script>
+const PIC_NAMES = ["Adi","Dian","Ega","Flo","Ganesh","Gerry","Kevin","Kokom","Rafli"];
+const PIC_LINKS = {
+  "Adi":    "https://docs.google.com/spreadsheets/d/1T1-gRwd5gBxPoA0Pq794GUBRAZC676Vty6X1z5tJxFY/edit",
+  "Dian":   "https://docs.google.com/spreadsheets/d/1E8uFYNqxHxb5N_Z68ulWf0A-QeEXuVjGLQ3NPLWd6bg/edit?gid=1397372609#gid=1397372609",
+  "Ega":    "https://docs.google.com/spreadsheets/d/1TjEMqSICwmAheBS62zTe2xPadh1-A3stL948ewaVyqI/edit?gid=1397372609#gid=1397372609",
+  "Flo":    "https://docs.google.com/spreadsheets/d/1w30BklOsE6pBiY1C-6v0tJqqSHk_PXVnzWuntBRcokM/edit?gid=1397372609#gid=1397372609",
+  "Ganesh": "https://docs.google.com/spreadsheets/d/1skUAKhGG8YXic3BgkKc1ZDAEmgRc3bZblb4bvcrj6bw/edit?gid=1397372609#gid=1397372609",
+  "Gerry":  "https://docs.google.com/spreadsheets/d/1VpRESija7ZfPetAMQqPfpuVNwvrE2AA0P7HCwqBDaXk/edit?gid=1397372609#gid=1397372609",
+  "Kevin":  "https://docs.google.com/spreadsheets/d/12PMG_vbSdYXhnhKKpZbObZ81X-JG-u0LAWuAFsQlsj0/edit?gid=1397372609#gid=1397372609",
+  "Kokom":  "https://docs.google.com/spreadsheets/d/1IYCfyrjbYPnJ1cXL-akBaarpq0HLVg-fuIOaGcVd6jk/edit?gid=1397372609#gid=1397372609",
+  "Rafli":  "https://docs.google.com/spreadsheets/d/1p32GXUR7Q96qJRB9pFyxw-C4kW8H75D3uhQ3sSdyLRU/edit?gid=1397372609#gid=1397372609"
+};
+const HASIL_LINK = "https://docs.google.com/spreadsheets/d/1OHvy41YKMTJco5vE4nLJSt3v02sJHsRP-9vLTzwDNrU/edit";
+const OLAH_LINK = "https://docs.google.com/spreadsheets/d/1lX6XCPaqtr038UAKDwhTALhTZYFAvWk2SsEbkp0VAxs/edit";
+
+const phases = [
+  {
+    label:"Fase 0 — Persiapan Awal (Sebelum Memulai)", color:"#888780",
+    steps:[
+      { num:"0.1", label:"Import Submber Data yang dibutuhkan", type:"bgr",
+        pic:["Contributor"], picType:"custom",picLabel:"Contributor Spreadsheet",
+        source:"Spreadsheet Olahan Peminatan", sourceLink:OLAH_LINK,
+        desc:"Langkah paling awal sebelum apapun dimulai. Import SEMUA Sumber Data yang dibutuhkan untuk selanjutnya menjadi DATA ACUAN untuk seluruh rangkaian proses analisa peminatan semua PIC Program.",
+        action:"1. Buka link Spreadsheet pada bagian Sumber Data\n2. Import file Std Registration Report Genap dan Ganjil\n3. Import file Free Elective Registration Report Genap dan Ganjil -> untuk menampilkan data mahasiswa yang memilih MK EC/FE\n4. Import file Olah Minor Ganjil -> untuk mengambil data hasil pilihan minor mahasiswa\n5. Import file Tarikan N_CRSE_PER_PERIOD dari BCS - > ini PENTING dikarenakan untuk ACUAN validasi kesesuaian Distribusi MK pada programnya\n6. Import file Tarikan N_CRSE_DESCR dari BCS -> untuk mengambil data Nama Bahasa Indonesia pada tiap MK\n7. Buat Sheet Baru untuk menampilkan Data Duplikat dari Term Active yang di IMPORTRANGE dari Spreadsheet Tarikan Term Active\n\n*Masing-masing File yang diimport dibuatkan Sheet yang berbeda",
+        output:"SUMBER DATA ACUAN untuk analisa peminatan tiap PIC" },
+      { num:"0.2", label:"Pendataan SKS Streaming / Minor / EC / FE per Program", type:"bgr",
+        pic:PIC_NAMES, picType:"custom",
+        source:"Spreadsheet Olahan Peminatan", sourceLink:OLAH_LINK,
+        desc:"Masing-masing PIC melakukan pendataan jumlah SKS ST/MP/EC/FE pada setiap data program yang tercantum:\n• Kolom D → Streaming\n• Kolom E → Free Electives\n• Kolom F → Elective Courses\n\nCatatan: Jika terdapat Streaming yang di dalamnya ada MK EC, SKS EC tetap diinput di kolom F.",
+        action:"1. Buka link Spreadsheet pada bagian source\n2. beralih ke Sheet yang bernama Legend, kemudian Isi Kolom D dengan SKS Streaming\n3. Isi Kolom E dengan SKS Free Electives\n4. Isi Kolom F dengan SKS Elective Courses\n   → Jika ada MK EC dalam Streaming, tetap input SKS-nya di Kolom F",
+        output:"Data SKS terpantau → menjaga kesesuaian jumlah SKS MK yang diinput saat analisa" },
+      { num:"0.3", label:"Create Sheet Regist & Copy Formula Masing-Masing PIC", type:"bgr",
+        pic:PIC_NAMES, picType:"custom",
+        source:"Spreadsheet Olahan Peminatan", sourceLink:OLAH_LINK,
+        desc:"Create sheets dan spreadsheet PIC agar semua formula dan kondisi berjalan dengan benar. Dilakukan sekali setiap periode analisa baru.",
+        action:"Create Sheets PIC:\n1. Copy-Paste Baris 1 s/d 3 dari Sheet Regist PIC periode sebelumnya\n2. Ganti Nama PIC di Kolom A Baris Kedua\n3. Copy kembali 2 Baris Pertama → Paste di Baris ke-4\n\nCOPY FORMULA:\n4. Copy formula pada cell kosong (atau cell abu gelap di atasnya)\n5. Paste sampai baris seterusnya\n\nCreate Spradsheet PIC atau Buat salinan dari spreadsheet yang sudah ada sebelumnya\n- GANTI NAMA PIC DI SEMUA SHEET:\n- Tekan CTRL+H\n- Isi nama PIC sebelumnya → Replace dengan nama PIC seharusnya\n- Pilih Semua Sheet → centang 'Telusuri juga dalam formula'\n- Klik 'Ganti Semua / Replace ALL'",
+        output:"Formula berjalan: monitoring pilihan Minor & Status Registrasi, pengambilan Nama MK dari kode, Type & Kategori MK" }
+    ]
+  },
+  {
+    label:"Fase 1 — Input Pilihan Peminatan Mahasiswa", color:"#7F77DD",
+    steps:[
+      { num:"1", label:"Analisa Std Registration", type:"bp",
+        pic:PIC_NAMES, picType:"program",
+        source:"Spreadsheet Peminatan Masing-Masing PIC",
+        desc:"Tahap ini merupakan Langkah Pertama dari rangkaian proses ANALISA PEMINATAN dimana masing-masing PIC Program melakukan analisa pilihan Peminatan Mahasiswa berdasarkan prioritas yang diregistrasikan baik Streaming / Minor / Free Elective.",
+        action:"1. Buka Sheet '1. Analisa Std Registration' di spreadsheet PIC\n2. Lihat kolom Acad Sub Plan → berisi nama peminatan mahasiswa\n3. Copy nama peminatan tersebut\n4. Paste Value ke kolom 'Hasil Pilihan (Copas Dari Kolom Acad Sub Plan)'\n5. Lakukan untuk semua mahasiswa di daftar",
+        output:"Kolom AB pada Sheet 1. Analisa Std Registration terisi → menampilkan mahasiswa yang memilih Free Electives / Elective Courses secara otomatis" },
+      { num:"2", label:"Analisa Pilihan EC/FE @Program", type:"bp",
+        pic:PIC_NAMES, picType:"program",
+        source:"Spreadsheet Peminatan Masing-Masing PIC",
+        desc:"Setelah semua mahasiswa dianalisa pilihan peminatannya, pilihan mahasiswa yang terdata Free Elective atau Elective Course (dan atau Streaming tetapi terdapat pilihan Elective Course) akan terlihat pada sheet ini meliputi Data Mahasiswa, termasuk data pilihan mata kuliahnya. Pada sheet ini juga akan ada penjagaan pada setiap mata kuliah yang dipilih, baik dari segi duplikasi data, kesesuaian total SKS, serta kesesuaian distribusi pada Programnya.",
+        action:"1. Buka Sheet '2. Analisa Pilihan EC/FE @Program'\n2. Untuk setiap mahasiswa EC/FE:\n   → Copy Course Code dari Kolom H\n   → Paste Value di kolom yang disediakan\n3. Sistem otomatis mengisi data lookup MK di kolom setelahnya\n4. Cek kolom 'Keterangan SKS':\n   ✅ Sesuai → lanjut\n   ⚠️ Kurang / Lebih → perlu penyesuaian",
+        output:"Data pilihan EC/FE mahasiswa terinput lengkap dengan status SKS. Data digabungkan otomatis ke Sheet 3. [View] Draft Analisa EC/FE" },
+      { num:"±", label:"Tambahan Registrasi (Jika Ada)", type:"ba",
+        pic:PIC_NAMES, picType:"program",
+        source:"Spreadsheet Peminatan Masing-Masing PIC",
+        desc:"Khusus mahasiswa aktif yang BELUM registrasi — NIM mereka TIDAK ada di Sheet 1. Analisa Std Registration. Data mereka tetap perlu diinput pilihan peminatan-nya.",
+        action:"1. Buka Sheet 'Tambahan Registrasi'\n2. Lihat tabel kiri (Kolom A s/d K) → mahasiswa aktif yang belum registrasi\n3. Jika ada yang pilih Free Elective:\n   → Copy: NIM, Nama, Acad Prog, Tipe Pilihan, Kode MK\n   → Paste di baris yang tersedia\n4. Jika tidak ada → lewati langkah ini",
+        output:"Data mahasiswa tambahan masuk ke Sheet 3. [View] Draft Analisa EC/FE secara otomatis" }
+    ]
+  },
+  {
+    label:"Fase 2 — Review Draft & Rekap Pertama", color:"#1D9E75",
+    steps:[
+      { num:"3", label:"[View] Draft Analisa EC/FE", type:"bt",
+        pic:PIC_NAMES, picType:"program",
+        source:"Spreadsheet Peminatan Masing-Masing PIC",
+        desc:"Sheet ini otomatis menggabungkan data dari Sheet 2. Analisa Pilihan EC/FE @Program DAN Sheet Tambahan Registrasi. PIC cukup buka dan verifikasi — tidak perlu input apapun.",
+        action:"1. Buka Sheet '3. [View] Draft Analisa EC/FE'\n2. Verifikasi semua data dari Sheet 2. Analisa Pilihan EC/FE @Program dan Sheet Tambahan Registrasi sudah muncul\n3. Periksa tidak ada data hilang atau duplikat\n4. Jika ada yang belum muncul → cek kembali input sebelumnya\n\nPERHATIAN: Sheet ini VIEW otomatis. Jangan edit langsung di sini.",
+        output:"Draft gabungan semua pilihan EC/FE per PIC Program siap untuk direkap ke Spreadsheet Hasil Peminatan" },
+      { num:"4/9/13", label:"Rekap Draft/Hasil Analisa EC/FE", type:"bc",
+        pic:["Sistem Otomatis"], picType:"auto",
+        source:"Spreadsheet Hasil Peminatan (Pusat)", sourceLink:HASIL_LINK,
+        desc:"CHECKPOINT UTAMA — Muncul 3 kali dalam alur (step 4, 9, 13). Setiap kali data baru masuk, rekap ini terupdate otomatis.\n\nFungsi: mengumpulkan dan menggabungkan semua data dari Sheet 3. [View] Draft Analisa EC/FE dari SELURUH spreadsheet PIC Program menjadi satu rekap terpusat.",
+        action:"Tidak ada aksi manual untuk PIC Program.\nSheet ini bekerja otomatis.\n\nYang perlu dipastikan sebelum lanjut:\n✅ Semua PIC Program sudah selesai input di step sebelumnya\n✅ Akses ke Spreadsheet Hasil Peminatan sudah diberikan\n✅ Koneksi antara spreadsheet PIC dan Hasil Peminatan aktif",
+        output:"Data gabungan pilihan MK EC/FE semua mahasiswa dari semua Program tersedia dan siap didistribusikan ke masing-masing Department" }
+    ]
+  },
+  {
+    label:"Fase 3 — Analisa & Konfirmasi oleh Department", color:"#D85A30",
+    steps:[
+      { num:"5/7", label:"[View] EC/FE @Department", type:"bt",
+        pic:["PIC Department"], picType:"dept",
+        source:"Spreadsheet Peminatan Masing-Masing PIC",
+        desc:"Sheet ini mengambil data dari Rekap (4/9/13) dan menampilkannya terfilter per Department.\n\nMuncul 2 kali:\n• Step 5: sebelum analisa — lihat daftar MK yang perlu dikonfirmasi\n• Step 7: sesudah analisa — tampilkan status MK yang sudah diisi di Sheet 6. Analisa EC/FE @Department",
+        action:"1. Buka Sheet '5/7. [View] EC/FE @Department'\n2. Review semua MK yang masuk ke Department Anda\n3. Catat MK yang perlu dicek status pembukaannya\n4. Lanjut ke Sheet 6. Analisa EC/FE @Department untuk input konfirmasi\n\nSetelah Sheet 6 diisi:\n5. Kembali ke Sheet ini (kemunculan ke-2/step 7)\n6. Verifikasi status MK sudah terupdate via INDEX MATCH",
+        output:"Daftar EC/FE per Department tersedia dan terhubung ke Sheet 6. Analisa EC/FE @Department via INDEX MATCH" },
+      { num:"6", label:"Analisa EC/FE @Department", type:"bp",
+        pic:["PIC Department"], picType:"dept",
+        source:"Spreadsheet Peminatan Masing-Masing PIC",
+        desc:"Langkah utama PIC Department: mengisi informasi status setiap MK EC/FE yang diminta mahasiswa. Informasi ini menentukan apakah mahasiswa bisa ambil MK tersebut atau perlu ganti.",
+        action:"1. Buka Sheet '6. Analisa EC/FE @Department'\n2. Copy Data NIM s/d Department dari Sheet 5/7. [View] EC/FE @Department\n3. Paste Value di baris kosong di Sheet ini\n4. Isi status setiap MK:\n   • Status Keterbukaan MK → Buka / Tutup / Terbatas\n   • Lokasi Kampus\n   • Section Kelas\n   • Keterangan PIC (jika ada)\n5. Simpan setelah semua data terisi",
+        output:"Sheet 5/7. [View] EC/FE @Department otomatis mengambil status MK via INDEX MATCH dari Sheet 6. Analisa EC/FE @Department → status langsung terlihat di View" },
+      { num:"8", label:"Hasil Analisa EC/FE PIC @Department", type:"bc",
+        pic:["Sistem Otomatis"], picType:"auto",
+        source:"Spreadsheet Hasil Peminatan (Pusat)", sourceLink:HASIL_LINK,
+        desc:"Sheet di Spreadsheet Hasil Peminatan (pusat) yang mengumpulkan semua inputan dari Sheet 5/7. [View] EC/FE @Department dari SELURUH spreadsheet PIC Program menjadi satu data terpusat.\n\nIni adalah output resmi hasil konfirmasi semua Department.",
+        action:"Tidak ada aksi manual.\nSheet ini otomatis mengumpulkan data dari semua PIC Department.\n\nYang perlu dipastikan:\n✅ Semua PIC Department sudah selesai mengisi Sheet 6. Analisa EC/FE @Department\n✅ Data di Sheet 5/7. [View] EC/FE @Department sudah terupdate",
+        output:"Data status MK dari semua Department terkumpul terpusat → menjadi sumber data untuk Rekap step 9 via INDEX MATCH" }
+    ]
+  },
+  {
+    label:"Fase 4 — Perubahan MK & Finalisasi oleh Program", color:"#7F77DD",
+    steps:[
+      { num:"10/11", label:"[View] Hasil/Perubahan EC/FE @Program", type:"bt",
+        pic:PIC_NAMES, picType:"program",
+        source:"Spreadsheet Peminatan Masing-Masing PIC",
+        desc:"Data duplikat dari Sheet 4/9. Rekap Draft/Hasil Analisa EC/FE di Spreadsheet Hasil Peminatan, sudah difilter berdasarkan Program.\n\nPIC Program melihat apakah ada MK yang Tutup/tidak dibuka oleh Department, dan mengidentifikasi mahasiswa yang perlu ganti pilihan MK EC/FE.",
+        action:"1. Buka Sheet '10/11. [View] Hasil/Perubahan EC/FE @Program'\n2. Cek kolom Status Keterbukaan MK dari hasil Department\n3. Identifikasi mahasiswa yang MK-nya TUTUP atau TERBATAS\n4. Catat NIM dan MK yang perlu diganti\n5. Lanjut ke Sheet 10.1. Analisa Hasil/Perubahan EC/FE @Program untuk penggantian MK",
+        output:"Daftar mahasiswa yang perlu perubahan pilihan MK EC/FE teridentifikasi" },
+      { num:"10.1", label:"Analisa Hasil/Perubahan EC/FE @Program", type:"bp",
+        pic:PIC_NAMES, picType:"program",
+        source:"Spreadsheet Peminatan Masing-Masing PIC",
+        desc:"Sheet untuk melakukan penggantian MK EC/FE yang sudah mendapat hasil konfirmasi dari PIC Department. Jika dari data Sheet 10/11. [View] Hasil/Perubahan EC/FE @Program terdapat MK yang tidak dibuka, PIC Program mengganti pilihan MK mahasiswa tersebut.",
+        action:"1. Buka Sheet '10.1. Analisa Hasil/Perubahan EC/FE @Program'\n2. Kembali ke Sheet 10/11. [View] Hasil/Perubahan EC/FE @Program\n   → Copy Data NIM s/d SKS (Kolom G) untuk mahasiswa yang MK-nya perlu diganti\n3. Paste Value di baris kosong di Sheet 10.1. Analisa Hasil/Perubahan EC/FE @Program\n4. Ganti Course Code MK Tutup dengan Course Code MK pengganti\n5. Cek kembali status SKS → pastikan Sesuai\n6. Simpan",
+        output:"Data perubahan MK diambil otomatis oleh Sheet 10/11. [View] Hasil/Perubahan EC/FE @Program → disetor ke Spreadsheet Hasil Peminatan" },
+      { num:"12", label:"Hasil Analisa Perubahan EC/FE @PIC Program", type:"bc",
+        pic:["Sistem Otomatis"], picType:"auto",
+        source:"Spreadsheet Hasil Peminatan (Pusat)", sourceLink:HASIL_LINK,
+        desc:"Sheet di Spreadsheet Hasil Peminatan (pusat) yang menggabungkan semua data perubahan MK EC/FE dari Sheet 10.1. Analisa Hasil/Perubahan EC/FE @Program seluruh PIC Program.\n\nSetelah ini, Sheet 4/9/13. Rekap Draft/Hasil Analisa EC/FE otomatis menggantikan MK lama dengan MK baru.",
+        action:"Tidak ada aksi manual.\nSheet ini otomatis menggabungkan semua perubahan MK dari seluruh PIC Program.\n\nYang perlu dipastikan:\n✅ Semua PIC Program sudah selesai mengisi Sheet 10.1. Analisa Hasil/Perubahan EC/FE @Program\n✅ Perubahan MK sudah benar sebelum lanjut ke Rekap Final",
+        output:"MK lama tergantikan oleh MK baru di Sheet 4/9/13. Rekap Draft/Hasil Analisa EC/FE Final → data peminatan mahasiswa sudah final" }
+    ]
+  },
+  {
+    label:"Fase 5 — Monitoring Final, Upload & Pengumuman", color:"#185FA5",
+    steps:[
+      { num:"14", label:"Rekap Hasil/Perubahan Peminatan @Program", type:"ba",
+        pic:PIC_NAMES, picType:"program",
+        source:"Spreadsheet Peminatan Masing-Masing PIC",
+        desc:"Monitoring akhir SEBELUM pengumuman diupload. PIC Program memastikan seluruh hasil pilihan peminatan mahasiswa sudah benar dan final — termasuk jika ada perubahan di menit-menit terakhir.",
+        action:"1. Buka Sheet '14. Rekap Hasil/Perubahan Peminatan @Program'\n2. Review seluruh data mahasiswa dan hasil pilihannya\n3. Pastikan tidak ada data kosong, duplikat, atau salah\n4. Jika masih ada perubahan:\n   → Kembali ke Sheet 10.1. Analisa Hasil/Perubahan EC/FE @Program\n   → Tunggu data terupdate di sheet ini\n5. Jika semua sudah benar → lanjut ke Upload",
+        output:"Data peminatan mahasiswa final dan siap untuk diumumkan" },
+      { num:"↑", label:"[Upload] Std Announcement", type:"bb",
+        pic:PIC_NAMES, picType:"program",
+        source:"Spreadsheet Peminatan Masing-Masing PIC",
+        desc:"Sheet ini otomatis menampilkan NIM mahasiswa sesuai Term Active dimana pilihan peminatan sudah terinput pada Sheet 1. Analisa Std Registration DAN Sheet Tambahan Registrasi.",
+        action:"1. Buka Sheet '[Upload] Std Announcement'\n2. Pastikan NIM mahasiswa sudah muncul otomatis\n3. Verifikasi kelengkapan data\n4. Export / download sesuai format yang dibutuhkan sistem\n5. Upload ke sistem pengumuman",
+        output:"Pengumuman standar peminatan terkirim ke mahasiswa" },
+      { num:"↑", label:"[Upload] EC/FE Announcement", type:"bb",
+        pic:PIC_NAMES, picType:"program",
+        source:"Spreadsheet Peminatan Masing-Masing PIC",
+        desc:"Sheet ini otomatis menampilkan NIM sesuai data di Sheet 10/11. [View] Hasil/Perubahan EC/FE @Program beserta semua data yang perlu diumumkan ke mahasiswa (MK, status, lokasi, section kelas, dll).",
+        action:"1. Buka Sheet '[Upload] EC/FE Announcement'\n2. Cek kelengkapan data:\n   → NIM mahasiswa EC/FE\n   → Data MK hasil akhir (sudah termasuk perubahan dari Sheet 10.1)\n   → Status, Lokasi, Section Kelas\n3. Export dan upload ke sistem pengumuman\n4. Pastikan semua mahasiswa EC/FE sudah tercakup",
+        output:"Pengumuman resmi hasil peminatan EC/FE terkirim ke mahasiswa" },
+      { num:"↑", label:"[Upload] Template Upload EC/FE ke BCS", type:"bb",
+        pic:PIC_NAMES, picType:"program",
+        source:"Spreadsheet Peminatan Masing-Masing PIC",
+        desc:"Sheet ini otomatis menampilkan NIM sesuai data di Sheet 10/11. [View] Hasil/Perubahan EC/FE @Program beserta semua data yang dibutuhkan untuk proses upload enrollment ke sistem BCS.",
+        action:"1. Buka Sheet '[Upload] Template UPLOAD EC/FE'\n2. Pastikan data lengkap sesuai format BCS:\n   → NIM, Kode MK, Section, Lokasi, dan data lain\n3. Export ke format yang diterima BCS\n4. Upload ke sistem BCS\n5. Konfirmasi upload berhasil",
+        output:"Data EC/FE mahasiswa berhasil masuk ke sistem BCS untuk kemudian akan ter-generate pada Paket Result yang selanjutnya akan diperlukan semua PIC untuk menentukan jumlah kelas yang akan digunakan untuk perkuliahan periode berjalan" }
+    ]
+  },
+  {
+    label:"Fase 6 — Output & Monitoring Akhir", color:"#639922",
+    steps:[
+      { num:"15", label:"Pengajuan Perubahan Peminatan @Program", type:"bg",
+        pic:PIC_NAMES, picType:"program",
+        source:"Spreadsheet PIC Permohonan",
+        desc:"Monitoring akhir untuk memantau seluruh permohonan perubahan peminatan dari mahasiswa. Sheet ini mengambil data dari Spreadsheet PIC Permohonan dan menjadi catatan resmi semua pengajuan perubahan.",
+        action:"1. Buka Sheet '15. Pengajuan Perubahan Peminatan @Program'\n2. Pantau daftar mahasiswa yang mengajukan perubahan peminatan\n3. Proses setiap permohonan sesuai ketentuan yang berlaku\n4. Update status permohonan sesuai hasil keputusan",
+        output:"✅ SELESAI — Semua data peminatan EC/FE final, pengumuman terkirim dan Mahasiswa bisa Melihat Hasil Pilihan Peminatannya, Paket Mahasiswa terbentuk di BCS, dan permohonan perubahan terpantau" }
+    ]
+  }
+];
+
+function buildPicHtml(s) {
+  if (s.picType === "auto") {
+    return `<span class="badge bc" style="font-size:11px">Otomatis oleh Sistem</span>`;
+  }
+
+  if (s.picType === "dept") {
+    return `<span class="badge bc" style="font-size:11px">PIC Department (masing-masing)</span>`;
+  }
+
+  // ✅ TAMBAHAN: kalau custom → tampilkan teks saja (tanpa link)
+  if (s.picType === "custom") {
+    const names = s.pic.map(n => `<span class="src-tag">${n}</span>`).join(' ');
+    return `<div class="pic-links">${names}</div>`;
+  }
+
+  // default (program) → pakai link
+  const links = s.pic.map(n => `<a class="pic-link" href="${PIC_LINKS[n]}" target="_blank">${n} ↗</a>`).join('');
+  return `<div style="font-size:11px;color:#6b6a63;margin-bottom:0px">Klik nama untuk buka spreadsheet:</div>
+          <div class="pic-links">${links}</div>`;
+}
+  
+function buildSrcHtml(s) {
+  if (s.sourceLink) return `<a class="src-link" href="${s.sourceLink}" target="_blank">${s.source} ↗</a>`;
+  return `<span class="src-tag">${s.source}</span>`;
+}
+
+const flow = document.getElementById('flow');
+let openId = null;
+
+phases.forEach((phase, pi) => {
+  const isLast = pi === phases.length - 1;
+
+  const block = document.createElement('div');
+  block.className = 'phase-block';
+
+  // Phase label
+  const plabel = document.createElement('div');
+  plabel.className = 'phase-label';
+  plabel.innerHTML = `<div class="phase-dot" style="background:${phase.color}"></div><span class="phase-title">${phase.label}</span>`;
+  block.appendChild(plabel);
+
+  // Cards row
+  const row = document.createElement('div');
+  row.className = 'cards-row';
+
+  phase.steps.forEach((s, si) => {
+    const isLastStep = si === phase.steps.length - 1;
+    const id = `p${pi}s${si}`;
+
+    const wrap = document.createElement('div');
+    wrap.className = 'card-wrap';
+
+    const card = document.createElement('div');
+    card.className = 'step-card';
+    card.id = 'card_'+id;
+    card.innerHTML = `
+      <div class="card-num">Step ${s.num}</div>
+      <div class="card-title">${s.label}</div>
+      <div class="card-badge"><span class="badge ${s.type}" style="font-size:10px">
+        ${s.picLabel ? s.picLabel : (s.picType==='auto'?'Otomatis':s.picType==='dept'?'PIC Dept':'PIC Program')}
+      </span></div>
+      <span class="card-arrow-ind">▾</span>`;
+
+    card.addEventListener('click', () => {
+      const panel = document.getElementById('panel_'+id);
+      const wasOpen = panel.classList.contains('open');
+      // Close all
+      document.querySelectorAll('.detail-panel').forEach(p => p.classList.remove('open'));
+      document.querySelectorAll('.step-card').forEach(c => c.classList.remove('active'));
+      if (!wasOpen) {
+        panel.classList.add('open');
+        card.classList.add('active');
+        setTimeout(() => panel.scrollIntoView({behavior:'smooth', block:'nearest'}), 50);
+      }
+    });
+
+    wrap.appendChild(card);
+
+    // Connector arrow between cards
+    if (!isLastStep) {
+      const conn = document.createElement('div');
+      conn.className = 'conn';
+      conn.textContent = '→';
+      wrap.appendChild(conn);
+    }
+
+    row.appendChild(wrap);
+  });
+
+  block.appendChild(row);
+
+  // Detail panels (one per step, full width below row)
+  phase.steps.forEach((s, si) => {
+    const id = `p${pi}s${si}`;
+    const panel = document.createElement('div');
+    panel.className = 'detail-panel';
+    panel.id = 'panel_'+id;
+
+    panel.innerHTML = `
+      <div class="dp-header">
+        <div class="dp-title">${s.label}</div>
+        <button class="dp-close" onclick="this.closest('.detail-panel').classList.remove('open');document.getElementById('card_${id}').classList.remove('active')">Tutup ✕</button>
+      </div>
+      <div class="dp-grid">
+        <div class="dp-section">
+          <div class="dp-section-title">PIC</div>
+          <div class="dp-section-body">${buildPicHtml(s)}</div>
+        </div>
+        <div class="dp-section">
+          <div class="dp-section-title">Sumber Data</div>
+          <div class="dp-section-body">${buildSrcHtml(s)}</div>
+        </div>
+        <div class="dp-section full">
+          <div class="dp-section-title">Penjelasan</div>
+          <div class="dp-section-body">${s.desc}</div>
+        </div>
+        <div class="dp-section full">
+          <div class="dp-section-title">Yang Harus Dilakukan</div>
+          <div class="action-box">${s.action}</div>
+        </div>
+        <div class="dp-section full">
+          <div class="dp-section-title">Output</div>
+          <div class="output-val">${s.output}</div>
+        </div>
+      </div>`;
+
+    block.appendChild(panel);
+  });
+
+  // Down-arrow connector between phases
+  if (!isLast) {
+    const down = document.createElement('div');
+    down.className = 'conn-down';
+    down.textContent = '↓';
+    block.appendChild(down);
+  }
+
+  flow.appendChild(block);
+});
+</script>
+</body>
+</html>
